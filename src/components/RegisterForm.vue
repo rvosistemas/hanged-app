@@ -6,13 +6,13 @@
                v-model="confirmPassword"
                type="password"
                placeholder="Confirm Password" />
-        <button type="submit">Sign up</button>
+        <button type="submit" class="submit-btn">Sign up</button>
         <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
         <p v-if="successMessage" class="success-message">{{ successMessage }}</p>
+        <button @click="goToLogin" class="login-btn">I already have an account,
+            Start
+            session</button>
     </form>
-
-    <button @click="goToLogin" class="login-button">I already have an account, Start
-        session</button>
 </template>
 
 <script setup lang="ts">
@@ -104,10 +104,19 @@ const goToLogin = () => {
     border-radius: 5px;
 }
 
-.form-container button {
+.submit-btn {
     padding: 8px 12px;
     background-color: #007bff;
     color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.login-btn {
+    margin-top: 10px;
+    background-color: #d95050;
+    color: #ffffff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -121,14 +130,5 @@ const goToLogin = () => {
 .success-message {
     color: #00ff00;
     margin-top: 5px;
-}
-
-.login-button {
-    margin-top: 10px;
-    background-color: #f0f0f0;
-    color: #333;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
 }
 </style>

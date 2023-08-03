@@ -2,13 +2,13 @@
     <form @submit.prevent="submitForm" class="form-container">
         <input v-model="username" placeholder="Username" />
         <input v-model="password" type="password" placeholder="Password" />
-        <button type="submit">SLogin</button>
+        <button type="submit" class="submit-btn">Login</button>
         <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
         <p v-if="successMessage" class="success-message">{{ successMessage }}</p>
+        <button @click="goToRegister" class="register-btn">I don't have an
+            account,
+            Sign up</button>
     </form>
-
-    <button @click="goToRegister" class="register-button">I don't have an account,
-        Sign up</button>
 </template>
 
 <script setup lang="ts">
@@ -40,7 +40,6 @@ async function submitForm() {
         password: password.value,
     };
 
-    console.log("userData -> ", userData);
 
     await login(userData);
 }
@@ -61,6 +60,7 @@ async function login(userData: Object) {
             errorMessage.value = data.message;
         } else {
             successMessage.value = data.message;
+            localStorage.setItem('token', data.access_token);
             router.push({ path: "/board" });
         }
     } catch (error) {
@@ -93,10 +93,19 @@ const goToRegister = () => {
     border-radius: 5px;
 }
 
-.form-container button {
+.submit-btn {
     padding: 8px 12px;
     background-color: #007bff;
     color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.register-btn {
+    margin-top: 10px;
+    background-color: #d95050;
+    color: #ffffff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -110,14 +119,5 @@ const goToRegister = () => {
 .success-message {
     color: #00ff00;
     margin-top: 5px;
-}
-
-.register-button {
-    margin-top: 10px;
-    background-color: #f0f0f0;
-    color: #333;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
 }
 </style>

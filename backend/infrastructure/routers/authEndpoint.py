@@ -52,12 +52,17 @@ def register() -> tuple:
 @auth_bp.route("/login", methods=["POST"])
 def login():
     user_data = request.get_json()
+    print("#" * 20, "user_data: ", user_data)
     user = user_service.get_user_by_username(user_data["username"])
-    if not user or not password_manager.verify_password(
-        user_data.password, user["password"] or user["status"] == StatusEnum.INACTIVE
+    user = UserSerializer(user).to_dict()
+    if (
+        not user
+        or user["status"] == StatusEnum.INACTIVE
+        or not password_manager.verify_password(user_data["password"], user["password"])
     ):
         return jsonify({"message": "invalid credentials."}), 400
-    access_token = create_access_token(email=user["username"])
+    access_token = create_access_token(username=user["username"])
+    print("#" * 20, "access_token: ", access_token)
 
     return jsonify(
         {
