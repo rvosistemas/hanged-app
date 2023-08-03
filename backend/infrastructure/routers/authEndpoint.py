@@ -52,7 +52,6 @@ def register() -> tuple:
 @auth_bp.route("/login", methods=["POST"])
 def login():
     user_data = request.get_json()
-    print("#" * 20, "user_data: ", user_data)
     user = user_service.get_user_by_username(user_data["username"])
     user = UserSerializer(user).to_dict()
     if (
@@ -62,7 +61,6 @@ def login():
     ):
         return jsonify({"message": "invalid credentials."}), 400
     access_token = create_access_token(username=user["username"])
-    print("#" * 20, "access_token: ", access_token)
 
     return jsonify(
         {

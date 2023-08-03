@@ -1,4 +1,5 @@
 <template>
+    <p class="register-title">SIGN UP</p>
     <form @submit.prevent="submitForm" class="form-container">
         <input v-model="username" placeholder="Username" />
         <input v-model="password" type="password" placeholder="Password" />
@@ -86,49 +87,56 @@ const goToLogin = () => {
 </script>
 
 
-<style scoped>
+<style scoped lang="scss">
+register-title {
+    font-size: 30px;
+    font-weight: bolder;
+    text-align: center;
+}
+
 .form-container {
     display: flex;
     flex-direction: column;
     max-width: 300px;
+    max-height: 600px;
     margin: 0 auto;
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 5px;
-}
 
-.form-container input {
-    margin-bottom: 10px;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
+    input {
+        margin-bottom: 10px;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
 
-.submit-btn {
-    padding: 8px 12px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
+    .submit-btn {
+        padding: 8px 12px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
 
-.login-btn {
-    margin-top: 10px;
-    background-color: #d95050;
-    color: #ffffff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
+    .login-btn {
+        margin-top: 10px;
+        background-color: #d95050;
+        color: #ffffff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
 
-.error-message {
-    color: #ff0000;
-    margin-top: 5px;
-}
+    .error-message {
+        color: #ff0000;
+        margin-top: 5px;
+    }
 
-.success-message {
-    color: #00ff00;
-    margin-top: 5px;
+    .success-message {
+        color: #00ff00;
+        margin-top: 5px;
+    }
 }
 </style>
