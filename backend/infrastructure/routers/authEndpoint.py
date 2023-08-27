@@ -62,9 +62,17 @@ def login():
         return jsonify({"message": "invalid credentials."}), 400
     access_token = create_access_token(username=user["username"])
 
+    responseUser = {
+        "id": user["id"],
+        "username": user["username"],
+        "role": user["role"],
+        "status": user["status"],
+    }
+
     return jsonify(
         {
             "status": "success",
+            "user": responseUser,
             "access_token": access_token,
             "token_type": "bearer",
             "message": "User logged in successfully",
