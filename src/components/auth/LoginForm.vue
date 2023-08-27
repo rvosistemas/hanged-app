@@ -1,15 +1,18 @@
 <template>
-    <p class="login-title">LOGIN</p>
-    <form @submit.prevent="submitForm" class="form-container">
-        <input v-model="username" placeholder="Username" />
-        <input v-model="password" type="password" placeholder="Password" />
-        <button type="submit" class="submit-btn">Login</button>
-        <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
-        <p v-if="successMessage" class="success-message">{{ successMessage }}</p>
-        <button @click="goToRegister" class="register-btn">I don't have an
-            account,
-            Sign up</button>
-    </form>
+    <div class="login-container">
+        <p class="login-title">LOGIN</p>
+        <form @submit.prevent="submitForm" class="form-container">
+            <input v-model="username" placeholder="Username" />
+            <input v-model="password" type="password" placeholder="Password" />
+            <button type="submit" class="submit-btn">Login</button>
+            <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+            <p v-if="successMessage" class="success-message">{{ successMessage }}
+            </p>
+            <button @click="goToRegister" class="register-btn">I don't have an
+                account,
+                Sign up</button>
+        </form>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -62,6 +65,7 @@ async function login(userData: Object) {
         } else {
             successMessage.value = data.message;
             localStorage.setItem('token', data.access_token);
+            localStorage.setItem('userRole', data.user.role);
 
             // Wait for 2 seconds (2000 milliseconds) before navigating to 'board'
             setTimeout(() => {
@@ -81,6 +85,22 @@ const goToRegister = () => {
 </script>
 
 <style scoped lang="scss">
+.login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    background-color: darkslategrey;
+}
+
+.login-title {
+    text-align: center;
+    font-size: 30px;
+    font-weight: bold;
+    color: white;
+}
+
 .form-container {
     display: flex;
     flex-direction: column;

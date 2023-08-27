@@ -1,16 +1,14 @@
 <template>
+    <Navbar />
     <div class="board-container">
-        board
-        <!-- <button @click="goToLogin" class="login-btn">close session</button> -->
+        <h1>Board</h1>
         <button @click="goToLogin" class="login-btn">close session</button>
     </div>
 </template>
 
 <script setup lang="ts">
-// import { ref, inject } from "vue";
 import { useRouter } from "vue-router";
-
-// const FLASK_API_BASE_URL = inject<string>("FLASK_API_BASE_URL");
+import Navbar from "./Navbar/Navbar.vue";
 
 const router = useRouter();
 
@@ -22,11 +20,9 @@ const goToLogin = () => {
 
 <style scoped>
 .board-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    /* height: 100vh; */
+    display: block;
+    text-align: center;
+    padding: 10px;
 }
 
 .login-btn {

@@ -1,8 +1,8 @@
 import { createApp } from 'vue';
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import App from './App.vue';
-import LoginForm from './components/LoginForm.vue';
-import RegisterForm from './components/RegisterForm.vue';
+import LoginForm from './components/auth/LoginForm.vue';
+import RegisterForm from './components/auth/RegisterForm.vue';
 import Board from './components/Board.vue';
 
 import { FLASK_API_BASE_URL, VUE_API_BASE_URL } from '../config';

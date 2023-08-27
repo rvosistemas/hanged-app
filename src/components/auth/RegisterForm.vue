@@ -1,19 +1,22 @@
 <template>
-    <p class="register-title">SIGN UP</p>
-    <form @submit.prevent="submitForm" class="form-container">
-        <input v-model="username" placeholder="Username" />
-        <input v-model="password" type="password" placeholder="Password" />
-        <input
-               v-model="confirmPassword"
-               type="password"
-               placeholder="Confirm Password" />
-        <button type="submit" class="submit-btn">Sign up</button>
-        <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
-        <p v-if="successMessage" class="success-message">{{ successMessage }}</p>
-        <button @click="goToLogin" class="login-btn">I already have an account,
-            Start
-            session</button>
-    </form>
+    <div class="register-container">
+        <p class="register-title">SIGN UP</p>
+        <form @submit.prevent="submitForm" class="form-container">
+            <input v-model="username" placeholder="Username" />
+            <input v-model="password" type="password" placeholder="Password" />
+            <input
+                   v-model="confirmPassword"
+                   type="password"
+                   placeholder="Confirm Password" />
+            <button type="submit" class="submit-btn">Sign up</button>
+            <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+            <p v-if="successMessage" class="success-message">{{ successMessage }}
+            </p>
+            <button @click="goToLogin" class="login-btn">I already have an account,
+                Start
+                session</button>
+        </form>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -88,10 +91,20 @@ const goToLogin = () => {
 
 
 <style scoped lang="scss">
-register-title {
-    font-size: 30px;
-    font-weight: bolder;
+.register-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    background-color: darkslategrey;
+}
+
+.register-title {
     text-align: center;
+    font-size: 30px;
+    font-weight: bold;
+    color: white;
 }
 
 .form-container {
