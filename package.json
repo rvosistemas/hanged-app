@@ -3,6 +3,10 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
+    "start": "npm run start:both",
+    "start:both": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
+    "start:frontend": "vite",
+    "start:backend": "cd backend && .venv\\Scripts\\activate && flask run",
     "dev": "vite",
     "build": "vue-tsc && vite build && electron-builder",
     "preview": "vite preview"
@@ -17,6 +21,7 @@
   "devDependencies": {
     "@types/node": "^20.4.6",
     "@vitejs/plugin-vue": "^4.1.0",
+    "concurrently": "^8.2.1",
     "electron": "^24.4.0",
     "electron-builder": "^24.6.3",
     "sass": "^1.64.2",
