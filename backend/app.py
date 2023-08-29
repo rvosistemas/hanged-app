@@ -21,7 +21,7 @@ CORS(app)
 Base.metadata.create_all(engine)
 
 app.register_blueprint(auth_bp, url_prefix="/api/auth")
-app.register_blueprint(user_bp, url_prefix="/api/user")
+app.register_blueprint(user_bp, url_prefix="/api/users")
 
 app.route("/")(lambda: "Hello, world! This is the home page.")
 

@@ -8,7 +8,7 @@
 
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-import Navbar from "./Navbar/Navbar.vue";
+import Navbar from "../Navbar/Navbar.vue";
 
 const router = useRouter();
 
@@ -23,14 +23,14 @@ const goToLogin = () => {
     display: block;
     text-align: center;
     padding: 10px;
-}
 
-.login-btn {
-    margin-top: 10px;
-    background-color: #d95050;
-    color: #ffffff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+    .login-btn {
+        margin-top: 10px;
+        background-color: #d95050;
+        color: #ffffff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
 }
 </style>

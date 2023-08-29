@@ -98,58 +98,58 @@ const goToLogin = () => {
     align-items: center;
     height: 80vh;
     background-color: darkslategrey;
-}
 
-.register-title {
-    text-align: center;
-    font-size: 30px;
-    font-weight: bold;
-    color: white;
-}
+    .register-title {
+        text-align: center;
+        font-size: 30px;
+        font-weight: bold;
+        color: white;
+    }
 
-.form-container {
-    display: flex;
-    flex-direction: column;
-    max-width: 300px;
-    max-height: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-
-    input {
-        margin-bottom: 10px;
-        padding: 5px;
+    .form-container {
+        display: flex;
+        flex-direction: column;
+        max-width: 300px;
+        max-height: 600px;
+        margin: 0 auto;
+        padding: 20px;
         border: 1px solid #ccc;
         border-radius: 5px;
-    }
 
-    .submit-btn {
-        padding: 8px 12px;
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
+        input {
+            margin-bottom: 10px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
 
-    .login-btn {
-        margin-top: 10px;
-        background-color: #d95050;
-        color: #ffffff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
+        .submit-btn {
+            padding: 8px 12px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
-    .error-message {
-        color: #ff0000;
-        margin-top: 5px;
-    }
+        .login-btn {
+            margin-top: 10px;
+            background-color: #d95050;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
-    .success-message {
-        color: #00ff00;
-        margin-top: 5px;
+        .error-message {
+            color: #ff0000;
+            margin-top: 5px;
+        }
+
+        .success-message {
+            color: #00ff00;
+            margin-top: 5px;
+        }
     }
 }
 </style>
