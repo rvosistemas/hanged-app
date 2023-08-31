@@ -42,11 +42,35 @@ def get_users():
     return jsonify(serialized_users), 200
 
 
+@user_bp.route("/users/<int:user_id>", methods=["GET"])
+def get_user(user_id):
+    get_authorization_token(request)
+    user = user_service.get_user(user_id)
+    serialized_user = UserSerializer(user).to_dict()
+    return jsonify(serialized_user), 200
+
+
 @user_bp.route("/users", methods=["POST"])
 def create_user():
     get_authorization_token(request)
     data = request.get_json()
-    print("#" * 20, "data: ", data)
     user = user_service.create_user(data)
     serialized_user = UserSerializer(user).to_dict()
     return jsonify(serialized_user), 201
+
+
+@user_bp.route("/users/<int:user_id>", methods=["PUT"])
+def update_user(user_id):
+    get_authorization_token(request)
+    data = request.get_json()
+    user = user_service.update_user(user_id, data)
+    serialized_user = UserSerializer(user).to_dict()
+    return jsonify(serialized_user), 200
+
+
+@user_bp.route("/users/<int:user_id>", methods=["DELETE"])
+def delete_user(user_id):
+    get_authorization_token(request)
+    user = user_service.delete_user(user_id)
+    serialized_user = UserSerializer(user).to_dict()
+    return jsonify(serialized_user), 200
