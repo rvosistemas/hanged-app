@@ -19,7 +19,7 @@
                     <td>{{ user.role }}</td>
                     <td>{{ user.status }}</td>
                     <td>
-                        <button @click="editUser(user)"
+                        <button @click="openUpdateModal(user)"
                                 class="editButton">Edit</button>
                         <button @click="deleteUser(user)"
                                 class="deleteButton">Delete</button>
@@ -29,14 +29,17 @@
         </table>
         <button @click="openCreateModal" class="createButton">Create User</button>
         <!-- MODALS -->
-        <UserCreateUpdateModal :isOpen="isCreateModalOpen" @close="closeCreateModal" />
+        <UserCreateModal :isOpen="isCreateModalOpen" @close="closeCreateModal" />
+        <UserUpdateModal :isOpen="isUpdateModalOpen" :selectedUser="selectedUser" @close="closeUpdateModal" />
     </div>
 </template>
 
 <script setup lang="ts">
 import { ref, inject, onMounted } from 'vue';
 import axios from 'axios';
-import UserCreateUpdateModal from '../Modals/UserCreateUpdateModal.vue';
+
+import UserCreateModal from '../Modals/UserCreateModal.vue';
+import UserUpdateModal from '../Modals/UserUpdateModal.vue';
 
 // ------------ interfaces ------------
 interface User {
@@ -50,6 +53,11 @@ const FLASK_API_BASE_URL = inject<string>("FLASK_API_BASE_URL");
 
 const users = ref<User[]>([]);
 const token = localStorage.getItem('token'); // Obtén el token de localStorage
+const isCreateModalOpen = ref(false);
+const isUpdateModalOpen = ref(false);
+const selectedUser = ref();
+
+// TODO: HACER EL BORRADO Y CREAR PAGINACION
 
 // Realiza la solicitud HTTP cuando el componente se monta
 onMounted(async () => {
@@ -65,10 +73,6 @@ onMounted(async () => {
     }
 });
 
-const editUser = (user: User) => {
-    console.log(user);
-};
-
 const deleteUser = (user: User) => {
     console.log(user);
 };
@@ -77,11 +81,18 @@ const openCreateModal = () => {
     isCreateModalOpen.value = true;
 };
 
+const openUpdateModal = (user: User) => {
+    selectedUser.value = { ...user };
+    isUpdateModalOpen.value = true;
+};
+
 const closeCreateModal = () => {
     isCreateModalOpen.value = false;
 };
 
-const isCreateModalOpen = ref(false);
+const closeUpdateModal = () => {
+    isUpdateModalOpen.value = false;
+};
 
 </script>
 

@@ -1,40 +1,39 @@
 <template>
-    <!-- Modal para crear usuario -->
     <div v-if="isOpen" class="modal-overlay">
         <div class="modal">
-            <h2>Create New User</h2>
-            <form @submit.prevent="submitCreateUser">
-                <input v-model="newUser.username" placeholder="Username" />
+            <h2>Update User</h2>
+            <form @submit.prevent="submitUpdateUser">
+                <input v-model="props.selectedUser.username" placeholder="Username" />
 
                 <!-- Select for Role -->
                 <h3>Role</h3>
-                <select v-model="newUser.role">
+                <select v-model="props.selectedUser.role">
                     <option v-for="role in Object.values(RoleEnum)" :key="role">{{ role }}</option>
                 </select>
 
                 <!-- Select for Status -->
                 <h3>Status</h3>
-                <select v-model="newUser.status">
+                <select v-model="props.selectedUser.status">
                     <option v-for="status in Object.values(StatusEnum)" :key="status">{{ status }}</option>
                 </select>
 
                 <!-- Password input -->
                 <h3>Password</h3>
-                <input v-model="newUser.password" type="password" placeholder="Password" />
+                <input v-model="props.selectedUser.password" type="password" placeholder="Password" />
 
                 <!-- Confirm password input -->
                 <h3>Confirm Password</h3>
                 <input v-model="confirmPassword" type="password" placeholder="Confirm Password" />
 
-                <button type="submit">Create</button>
-                <button type="button" @click="closeCreateModal">Cancel</button>
+                <button type="submit">Update</button>
+                <button type="button" @click="closeUpdateModal">Cancel</button>
             </form>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { inject, ref } from 'vue';
+import { inject, ref, watchEffect } from 'vue';
 import axios from 'axios';
 
 interface User {
@@ -61,59 +60,86 @@ enum StatusEnum {
 
 const FLASK_API_BASE_URL = inject<string>("FLASK_API_BASE_URL");
 const confirmPassword = ref("");
-const isCreateModalOpen = ref(false);
+const isUpdateModalOpen = ref(false);
 const users = ref<User[]>([]);
 const token = localStorage.getItem('token');
 
-const { isOpen } = defineProps(['isOpen']);
 const emits = defineEmits();
 
-const newUser = ref<User>({
-    id: 0,
-    username: "",
-    role: "",
-    status: "",
-    password: "",
+const props = defineProps({
+    isOpen: Boolean,
+    selectedUser: {
+        type: Object as () => User,
+        required: true,
+    },
 });
 
-const closeCreateModal = () => {
-    emits('close');
 
-    isCreateModalOpen.value = false;
-    // Limpiar los campos del formulario cuando se cierra el modal
-    newUser.value = {
+
+watchEffect(() => {
+    if (props.selectedUser) {
+        onOpenUpdateModal(props.selectedUser);
+    }
+});
+
+const onOpenUpdateModal = (user: User) => {
+    Object.assign(props.selectedUser, user); // Update properties of selectedUser
+    isUpdateModalOpen.value = true; // Open the modal
+};
+
+const closeUpdateModal = () => {
+    emits('close');
+    isUpdateModalOpen.value = false;
+    // Reset properties of selectedUser when closing modal
+    Object.assign(props.selectedUser, {
         id: 0,
         username: "",
         password: "",
         role: "",
         status: "",
-    };
+    });
     confirmPassword.value = "";
 };
 
-const submitCreateUser = async () => {
+const submitUpdateUser = async () => {
+
+    if (!props.selectedUser) {
+        return; // Handle the case when selectedUser is undefined
+    }
+
     // Validación de contraseña y confirmación
-    if (newUser.value.password !== confirmPassword.value) {
+    if (props.selectedUser.password !== confirmPassword.value) {
         console.error("Password and Confirm Password do not match");
         return;
     }
 
+    // validar campos vacíos
+    if (!props.selectedUser.username || !props.selectedUser.password || !props.selectedUser.role || !props.selectedUser.status) {
+        console.error("Please, Complete all fields.");
+        return;
+    }
+
     try {
-        const response = await axios.post(
-            `${FLASK_API_BASE_URL}/api/users/users`,
-            newUser.value,
+        const response = await axios.put( // Use axios.put for updating user
+            `${FLASK_API_BASE_URL}/api/users/users/${props.selectedUser.id}`,
+            props.selectedUser,
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             }
         );
-        users.value.push(response.data);
-        closeCreateModal();
+        // Update the user in the users array
+        const updatedUserIndex = users.value.findIndex(u => u.id === props.selectedUser.id);
+        if (updatedUserIndex !== -1) {
+            users.value[updatedUserIndex] = response.data;
+        }
+        closeUpdateModal(); // Close the modal after updating
     } catch (error) {
-        console.error('Error creating user:', error);
+        console.error('Error updating user:', error);
     }
 };
+
 </script>
 
 <style scoped lang="scss">
