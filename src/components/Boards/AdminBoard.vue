@@ -29,8 +29,15 @@
         </table>
         <button @click="openCreateModal" class="createButton">Create User</button>
         <!-- MODALS -->
-        <UserCreateModal :isOpen="isCreateModalOpen" @close="closeCreateModal" />
+        <UserCreateModal :isOpen="isCreateModalOpen" @close="closeCreateModal" @userCreated="handleUserCreated" />
         <UserUpdateModal :isOpen="isUpdateModalOpen" :selectedUser="selectedUser" @close="closeUpdateModal" />
+        <UserDeleteModal
+                         v-if="isDeleteModalOpen"
+                         :isOpen="isDeleteModalOpen"
+                         :selectedUser="userToDelete"
+                         @cancel="closeDeleteModal"
+                         @confirm="confirmDeleteUser"
+                         @userDeleted="handleUserDeleted" />
     </div>
 </template>
 
@@ -40,6 +47,7 @@ import axios from 'axios';
 
 import UserCreateModal from '../Modals/UserCreateModal.vue';
 import UserUpdateModal from '../Modals/UserUpdateModal.vue';
+import UserDeleteModal from '../Modals/UserDeleteModal.vue';
 
 // ------------ interfaces ------------
 interface User {
@@ -57,12 +65,15 @@ const isCreateModalOpen = ref(false);
 const isUpdateModalOpen = ref(false);
 const selectedUser = ref();
 
-// TODO: HACER EL BORRADO Y CREAR PAGINACION
+const isDeleteModalOpen = ref(false);
+const userToDelete = ref();
+
+// TODO:CREAR PAGINACION Y MOSTRAR ALERTAS Y MENSAJES DE ERROR
 
 // Realiza la solicitud HTTP cuando el componente se monta
 onMounted(async () => {
     try {
-        const response = await axios.get(`${FLASK_API_BASE_URL}/api/users/users`, {
+        const response = await axios.get(`${FLASK_API_BASE_URL}/api/users/all`, {
             headers: {
                 Authorization: `Bearer ${token}`, // Incluye el token en el encabezado
             },
@@ -73,8 +84,17 @@ onMounted(async () => {
     }
 });
 
+const handleUserCreated = (newUser: User) => {
+    users.value.push(newUser);
+};
+
+const handleUserDeleted = (userId: number) => {
+    users.value = users.value.filter((user) => user.id !== userId);
+};
+
 const deleteUser = (user: User) => {
-    console.log(user);
+    userToDelete.value = user;
+    isDeleteModalOpen.value = true;
 };
 
 const openCreateModal = () => {
@@ -92,6 +112,19 @@ const closeCreateModal = () => {
 
 const closeUpdateModal = () => {
     isUpdateModalOpen.value = false;
+};
+
+const closeDeleteModal = () => {
+    userToDelete.value = null;
+    isDeleteModalOpen.value = false;
+};
+
+const confirmDeleteUser = () => {
+    if (userToDelete.value) {
+        // Realiza la lógica para eliminar el usuario aquí
+        console.log('Eliminando usuario:', userToDelete.value);
+        closeDeleteModal();
+    }
 };
 
 </script>

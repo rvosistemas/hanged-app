@@ -121,7 +121,7 @@ const submitUpdateUser = async () => {
 
     try {
         const response = await axios.put( // Use axios.put for updating user
-            `${FLASK_API_BASE_URL}/api/users/users/${props.selectedUser.id}`,
+            `${FLASK_API_BASE_URL}/api/users/update/${props.selectedUser.id}`,
             props.selectedUser,
             {
                 headers: {

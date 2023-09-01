@@ -106,7 +106,7 @@ const submitCreateUser = async () => {
 
     try {
         const response = await axios.post(
-            `${FLASK_API_BASE_URL}/api/users/users`,
+            `${FLASK_API_BASE_URL}/api/users/create`,
             newUser.value,
             {
                 headers: {
@@ -115,6 +115,8 @@ const submitCreateUser = async () => {
             }
         );
         users.value.push(response.data);
+        const newCreatedUser = response.data;
+        emits('userCreated', newCreatedUser);
         closeCreateModal();
     } catch (error) {
         console.error('Error creating user:', error);
