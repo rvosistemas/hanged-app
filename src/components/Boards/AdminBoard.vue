@@ -13,7 +13,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="user in users" :key="user.id">
+                <tr v-for="user in paginatedUsers" :key="user.id">
                     <td>{{ user.id }}</td>
                     <td>{{ user.username }}</td>
                     <td>{{ user.role }}</td>
@@ -27,6 +27,11 @@
                 </tr>
             </tbody>
         </table>
+        <div class="pagination">
+            <button @click="previousPage" :disabled="currentPage === 1">Anterior</button>
+            <button @click="nextPage" :disabled="endIndex >= users.length">Siguiente</button>
+        </div>
+
         <button @click="openCreateModal" class="createButton">Create User</button>
         <!-- MODALS -->
         <UserCreateModal :isOpen="isCreateModalOpen" @close="closeCreateModal" @userCreated="handleUserCreated" />
@@ -42,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, inject, onMounted } from 'vue';
+import { ref, inject, onMounted, computed } from 'vue';
 import axios from 'axios';
 
 import UserCreateModal from '../Modals/UserCreateModal.vue';
@@ -58,16 +63,35 @@ interface User {
 }
 
 const FLASK_API_BASE_URL = inject<string>("FLASK_API_BASE_URL");
+const token = localStorage.getItem('token'); // Obtén el token de localStorage
 
 const users = ref<User[]>([]);
-const token = localStorage.getItem('token'); // Obtén el token de localStorage
-const isCreateModalOpen = ref(false);
-const isUpdateModalOpen = ref(false);
 const selectedUser = ref();
-
-const isDeleteModalOpen = ref(false);
 const userToDelete = ref();
 
+const isCreateModalOpen = ref(false);
+const isUpdateModalOpen = ref(false);
+const isDeleteModalOpen = ref(false);
+
+const currentPage = ref(1); // Página actual
+const itemsPerPage = 5; // Cantidad de elementos por página
+
+const startIndex = computed(() => (currentPage.value - 1) * itemsPerPage);
+const endIndex = computed(() => currentPage.value * itemsPerPage);
+
+const paginatedUsers = computed(() => users.value.slice(startIndex.value, endIndex.value));
+
+const previousPage = () => {
+    if (currentPage.value > 1) {
+        currentPage.value -= 1;
+    }
+};
+
+const nextPage = () => {
+    if (endIndex.value < users.value.length) {
+        currentPage.value += 1;
+    }
+};
 // TODO:CREAR PAGINACION Y MOSTRAR ALERTAS Y MENSAJES DE ERROR
 
 // Realiza la solicitud HTTP cuando el componente se monta
