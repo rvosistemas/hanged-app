@@ -26,6 +26,13 @@
                 <h3>Confirm Password</h3>
                 <input v-model="confirmPassword" type="password" placeholder="Confirm Password" />
 
+                <div v-if="errorMessage" class="error-message">
+                    {{ errorMessage }}
+                </div>
+                <div v-if="successMessage" class="success-message">
+                    {{ successMessage }}
+                </div>
+
                 <button type="submit">Create</button>
                 <button type="button" @click="closeCreateModal">Cancel</button>
             </form>
@@ -43,6 +50,7 @@ interface User {
     role: string;
     status: string;
     password: string;
+    [key: string]: string | number; // Firma de índice
 }
 
 enum RoleEnum {
@@ -64,6 +72,9 @@ const confirmPassword = ref("");
 const isCreateModalOpen = ref(false);
 const users = ref<User[]>([]);
 const token = localStorage.getItem('token');
+
+const errorMessage = ref<string | null>(null);
+const successMessage = ref<string | null>(null);
 
 const { isOpen } = defineProps(['isOpen']);
 const emits = defineEmits();
@@ -91,19 +102,28 @@ const closeCreateModal = () => {
     confirmPassword.value = "";
 };
 
-const submitCreateUser = async () => {
-    // Validación de contraseña y confirmación
+
+function validateData() {
+    const requiredFields = ['username', 'password', 'role', 'status'];
+    const emptyField = requiredFields.find(field => !newUser.value[field]);
+
+    if (emptyField) {
+        errorMessage.value = "Please, Complete all fields.";
+        return true;
+    }
+
+    return false;
+}
+
+function validatePassword() {
     if (newUser.value.password !== confirmPassword.value) {
-        console.error("Password and Confirm Password do not match");
-        return;
+        errorMessage.value = "Passwords do not match.";
+        return true;
     }
+    return false;
+}
 
-    // validar campos vacíos
-    if (!newUser.value.username || !newUser.value.password || !newUser.value.role || !newUser.value.status) {
-        console.error("Please, Complete all fields.");
-        return;
-    }
-
+async function requestCreate() {
     try {
         const response = await axios.post(
             `${FLASK_API_BASE_URL}/api/users/create`,
@@ -117,10 +137,21 @@ const submitCreateUser = async () => {
         users.value.push(response.data);
         const newCreatedUser = response.data;
         emits('userCreated', newCreatedUser);
+        successMessage.value = "User created successfully.";
         closeCreateModal();
     } catch (error) {
+        errorMessage.value = "Error when creating the user.";
         console.error('Error creating user:', error);
     }
+}
+
+const submitCreateUser = async () => {
+
+    if (validateData()) return
+    if (validatePassword()) return
+
+    await requestCreate();
+
 };
 </script>
 

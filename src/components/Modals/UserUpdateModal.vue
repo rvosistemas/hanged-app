@@ -25,6 +25,13 @@
                 <h3>Confirm Password</h3>
                 <input v-model="confirmPassword" type="password" placeholder="Confirm Password" />
 
+                <div v-if="errorMessage" class="error-message">
+                    {{ errorMessage }}
+                </div>
+                <div v-if="successMessage" class="success-message">
+                    {{ successMessage }}
+                </div>
+
                 <button type="submit">Update</button>
                 <button type="button" @click="closeUpdateModal">Cancel</button>
             </form>
@@ -42,6 +49,7 @@ interface User {
     role: string;
     status: string;
     password: string;
+    [key: string]: string | number; // Index signature
 }
 
 enum RoleEnum {
@@ -64,6 +72,9 @@ const isUpdateModalOpen = ref(false);
 const users = ref<User[]>([]);
 const token = localStorage.getItem('token');
 
+const errorMessage = ref<string | null>(null);
+const successMessage = ref<string | null>(null);
+
 const emits = defineEmits();
 
 const props = defineProps({
@@ -73,8 +84,6 @@ const props = defineProps({
         required: true,
     },
 });
-
-
 
 watchEffect(() => {
     if (props.selectedUser) {
@@ -101,28 +110,32 @@ const closeUpdateModal = () => {
     confirmPassword.value = "";
 };
 
-const submitUpdateUser = async () => {
 
-    if (!props.selectedUser) {
-        return; // Handle the case when selectedUser is undefined
+function validateData() {
+    const requiredFields = ['username', 'password', 'role', 'status'];
+    const emptyField = requiredFields.find(field => !props.selectedUser[field]);
+
+    if (emptyField) {
+        errorMessage.value = "Please, Complete all fields.";
+        return true;
     }
 
-    // Validación de contraseña y confirmación
+    return false;
+}
+
+function validatePassword() {
     if (props.selectedUser.password !== confirmPassword.value) {
-        console.error("Password and Confirm Password do not match");
-        return;
+        errorMessage.value = "Passwords do not match.";
+        return true;
     }
+    return false;
+}
 
-    // validar campos vacíos
-    if (!props.selectedUser.username || !props.selectedUser.password || !props.selectedUser.role || !props.selectedUser.status) {
-        console.error("Please, Complete all fields.");
-        return;
-    }
-
+async function requestUpdate(selected: User) {
     try {
         const response = await axios.put( // Use axios.put for updating user
-            `${FLASK_API_BASE_URL}/api/users/update/${props.selectedUser.id}`,
-            props.selectedUser,
+            `${FLASK_API_BASE_URL}/api/users/update/${selected.id}`,
+            selected,
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -130,14 +143,31 @@ const submitUpdateUser = async () => {
             }
         );
         // Update the user in the users array
-        const updatedUserIndex = users.value.findIndex(u => u.id === props.selectedUser.id);
+        const updatedUserIndex = users.value.findIndex(u => u.id === selected.id);
         if (updatedUserIndex !== -1) {
             users.value[updatedUserIndex] = response.data;
         }
+        successMessage.value = "User updated successfully.";
         closeUpdateModal(); // Close the modal after updating
     } catch (error) {
         console.error('Error updating user:', error);
+        errorMessage.value = "Error updating user.";
     }
+}
+
+const submitUpdateUser = async () => {
+
+    const selected = props.selectedUser;
+
+    if (!selected) {
+        return; // Handle the case when selectedUser is undefined
+    }
+
+    if (validateData()) return
+    if (validatePassword()) return
+
+    requestUpdate(selected);
+
 };
 
 </script>

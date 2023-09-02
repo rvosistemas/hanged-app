@@ -2,6 +2,12 @@
     <div class="modal-overlay">
         <div class="modal">
             <p>Are you sure you want to delete this record?</p>
+            <div v-if="errorMessage" class="error-message">
+                {{ errorMessage }}
+            </div>
+            <div v-if="successMessage" class="success-message">
+                {{ successMessage }}
+            </div>
             <div class="button-container">
                 <button class="confirm" @click="submitDeleteUser">Confirm</button>
                 <button class="cancel" @click="cancelDelete">Cancel</button>
@@ -11,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { inject } from 'vue';
+import { inject, ref } from 'vue';
 import axios from 'axios';
 
 interface User {
@@ -33,6 +39,9 @@ const props = defineProps({
 const FLASK_API_BASE_URL = inject<string>("FLASK_API_BASE_URL");
 const token = localStorage.getItem('token');
 
+const errorMessage = ref<string | null>(null);
+const successMessage = ref<string | null>(null);
+
 const emits = defineEmits();
 
 const cancelDelete = () => {
@@ -52,8 +61,10 @@ const submitDeleteUser = async () => {
         // Emitir evento para informar al componente padre
         emits('confirm');
         emits('userDeleted', props.selectedUser.id);
+        successMessage.value = "User created successfully.";
     } catch (error) {
         console.error('Error deleting user:', error);
+        errorMessage.value = "Error deleting user";
     }
 };
 

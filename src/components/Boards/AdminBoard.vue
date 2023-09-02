@@ -39,6 +39,15 @@
 
 
         <button @click="openCreateModal" class="createButton">Create User</button>
+
+        <!-- errors messages -->
+        <div v-if="errorMessage" class="error-message">
+            {{ errorMessage }}
+        </div>
+        <div v-if="successMessage" class="success-message">
+            {{ successMessage }}
+        </div>
+
         <!-- MODALS -->
         <UserCreateModal :isOpen="isCreateModalOpen" @close="closeCreateModal" @userCreated="handleUserCreated" />
         <UserUpdateModal :isOpen="isUpdateModalOpen" :selectedUser="selectedUser" @close="closeUpdateModal" />
@@ -82,6 +91,9 @@ const isCreateModalOpen = ref(false);
 const isUpdateModalOpen = ref(false);
 const isDeleteModalOpen = ref(false);
 
+const errorMessage = ref<string | null>(null);
+const successMessage = ref<string | null>(null);
+
 const currentPage = ref(1); // Página actual
 const itemsPerPage = 5; // Cantidad de elementos por página
 
@@ -93,7 +105,7 @@ const filteredUsers = computed(() => {
 });
 
 const startIndex = computed(() => (currentPage.value - 1) * itemsPerPage);
-const endIndex = computed(() => currentPage.value * itemsPerPage);
+const endIndex = computed(() => startIndex.value + itemsPerPage);
 const totalPages = computed(() => Math.ceil(filteredUsers.value.length / itemsPerPage));
 
 const previousPage = () => {
@@ -103,7 +115,7 @@ const previousPage = () => {
 };
 
 const nextPage = () => {
-    if (endIndex.value < users.value.length) {
+    if (endIndex.value < filteredUsers.value.length) {
         currentPage.value += 1;
     }
 };
@@ -119,8 +131,6 @@ watch(searchText, () => {
     currentPage.value = 1; // Reinicia la página al cambiar la búsqueda
 });
 
-// TODO: MOSTRAR ALERTAS Y MENSAJES DE ERROR
-
 // Realiza la solicitud HTTP cuando el componente se monta
 onMounted(async () => {
     try {
@@ -131,12 +141,13 @@ onMounted(async () => {
         });
         users.value = response.data;
     } catch (error) {
-        console.error('Error al obtener la lista de usuarios:', error);
+        console.error('Error obtaining the list of users.', error);
     }
 });
 
 const handleUserCreated = (newUser: User) => {
     users.value.push(newUser);
+    successMessage.value = "User created successfully.";
 };
 
 const handleUserDeleted = (userId: number) => {
@@ -172,8 +183,8 @@ const closeDeleteModal = () => {
 
 const confirmDeleteUser = () => {
     if (userToDelete.value) {
-        // Realiza la lógica para eliminar el usuario aquí
-        console.log('Eliminando usuario:', userToDelete.value);
+        console.log('Eliminating user.', userToDelete.value);
+        successMessage.value = "User deleted successfully.";
         closeDeleteModal();
     }
 };
@@ -191,6 +202,27 @@ const confirmDeleteUser = () => {
         font-size: 24px;
         margin-bottom: 20px;
         color: white;
+    }
+
+    .search-container {
+        margin-top: 20px;
+        display: flex;
+        align-items: center;
+
+        h2 {
+            font-size: 18px;
+            margin-right: 10px;
+            color: white;
+
+        }
+
+        input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            outline: none;
+        }
     }
 
     table {
@@ -257,6 +289,36 @@ const confirmDeleteUser = () => {
         }
     }
 
+    .pagination {
+        margin-top: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        button {
+            padding: 8px 12px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 0 5px;
+
+            &:disabled {
+                background-color: #ccc;
+                cursor: not-allowed;
+            }
+        }
+
+        span {
+            font-size: 16px;
+            margin: 0 10px;
+            font-weight: bold;
+            color: white;
+        }
+    }
+
     .createButton {
         margin-top: 20px;
         padding: 8px 12px;
@@ -267,6 +329,25 @@ const confirmDeleteUser = () => {
         cursor: pointer;
     }
 
+    .error-message,
+    .success-message {
+        position: fixed;
+        top: 50px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 10px 20px;
+        border-radius: 5px;
+        color: white;
+        font-weight: bold;
+    }
+
+    .error-message {
+        background-color: #ff0000;
+    }
+
+    .success-message {
+        background-color: #00ff00;
+    }
 
 }
 </style>
