@@ -17,7 +17,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="user in filteredUsers" :key="user.id">
+                <tr v-for="user in paginatedUsers" :key="user.id">
                     <td>{{ user.id }}</td>
                     <td>{{ user.username }}</td>
                     <td>{{ user.role }}</td>
@@ -101,23 +101,38 @@ const filteredUsers = computed(() => {
     const filtered = users.value.filter((user) =>
         user.username.toLowerCase().includes(searchText.value.toLowerCase())
     );
+    console.log("1".repeat(10), "filtered: ", filtered);
     return filtered;
 });
 
 const startIndex = computed(() => (currentPage.value - 1) * itemsPerPage);
+console.log("1".repeat(10), "startIndex: ", startIndex.value);
+
 const endIndex = computed(() => startIndex.value + itemsPerPage);
+console.log("1".repeat(10), "endIndex: ", endIndex.value);
+
 const totalPages = computed(() => Math.ceil(filteredUsers.value.length / itemsPerPage));
+console.log("1".repeat(10), "totalPages: ", totalPages);
 
 const previousPage = () => {
     if (currentPage.value > 1) {
         currentPage.value -= 1;
+        updatePaginatedUsers();
     }
 };
 
 const nextPage = () => {
     if (endIndex.value < filteredUsers.value.length) {
         currentPage.value += 1;
+        updatePaginatedUsers();
     }
+};
+
+// Agrega esta función para actualizar paginatedUsers
+const updatePaginatedUsers = () => {
+    const startIndex = (currentPage.value - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    paginatedUsers.value = filteredUsers.value.slice(startIndex, endIndex);
 };
 
 watch(searchText, () => {
@@ -140,6 +155,7 @@ onMounted(async () => {
             },
         });
         users.value = response.data;
+        paginatedUsers.value = users.value.slice(startIndex.value, endIndex.value);
     } catch (error) {
         console.error('Error obtaining the list of users.', error);
     }
