@@ -41,12 +41,9 @@
         <button @click="openCreateModal" class="createButton">Create User</button>
 
         <!-- errors messages -->
-        <div v-if="errorMessage" class="error-message">
-            {{ errorMessage }}
-        </div>
-        <div v-if="successMessage" class="success-message">
-            {{ successMessage }}
-        </div>
+        <MessagePopup :message="errorMessage" type="error" :autoClose="true" @close="errorMessage = ''" />
+        <MessagePopup :message="successMessage" type="success" :autoClose="true" @close="successMessage = ''" />
+
 
         <!-- MODALS -->
         <UserCreateModal :isOpen="isCreateModalOpen" @close="closeCreateModal" @userCreated="handleUserCreated" />
@@ -68,6 +65,7 @@ import axios from 'axios';
 import UserCreateModal from '../Modals/UserCreateModal.vue';
 import UserUpdateModal from '../Modals/UserUpdateModal.vue';
 import UserDeleteModal from '../Modals/UserDeleteModal.vue';
+import MessagePopup from '../MessagePopup.vue';
 
 // ------------ interfaces ------------
 interface User {
@@ -91,8 +89,8 @@ const isCreateModalOpen = ref(false);
 const isUpdateModalOpen = ref(false);
 const isDeleteModalOpen = ref(false);
 
-const errorMessage = ref<string | null>(null);
-const successMessage = ref<string | null>(null);
+const errorMessage = ref("");
+const successMessage = ref("");
 
 const currentPage = ref(1); // Página actual
 const itemsPerPage = 5; // Cantidad de elementos por página
@@ -101,18 +99,14 @@ const filteredUsers = computed(() => {
     const filtered = users.value.filter((user) =>
         user.username.toLowerCase().includes(searchText.value.toLowerCase())
     );
-    console.log("1".repeat(10), "filtered: ", filtered);
     return filtered;
 });
 
 const startIndex = computed(() => (currentPage.value - 1) * itemsPerPage);
-console.log("1".repeat(10), "startIndex: ", startIndex.value);
 
 const endIndex = computed(() => startIndex.value + itemsPerPage);
-console.log("1".repeat(10), "endIndex: ", endIndex.value);
 
 const totalPages = computed(() => Math.ceil(filteredUsers.value.length / itemsPerPage));
-console.log("1".repeat(10), "totalPages: ", totalPages);
 
 const previousPage = () => {
     if (currentPage.value > 1) {
