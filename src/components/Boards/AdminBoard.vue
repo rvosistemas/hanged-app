@@ -1,6 +1,10 @@
 <template>
     <div class="admin-board-container">
         <h1>Admin Panel</h1>
+        <div class="search-container">
+            <h2>Search</h2>
+            <input v-model="searchText" placeholder="Search Users ..." />
+        </div>
         <table>
             <caption class="table-title">All Users</caption>
             <thead>
@@ -13,7 +17,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="user in paginatedUsers" :key="user.id">
+                <tr v-for="user in filteredUsers" :key="user.id">
                     <td>{{ user.id }}</td>
                     <td>{{ user.username }}</td>
                     <td>{{ user.role }}</td>
@@ -29,8 +33,10 @@
         </table>
         <div class="pagination">
             <button @click="previousPage" :disabled="currentPage === 1">Anterior</button>
-            <button @click="nextPage" :disabled="endIndex >= users.length">Siguiente</button>
+            <span>{{ currentPage }} / {{ totalPages }}</span>
+            <button @click="nextPage" :disabled="currentPage >= totalPages">Siguiente</button>
         </div>
+
 
         <button @click="openCreateModal" class="createButton">Create User</button>
         <!-- MODALS -->
@@ -47,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, inject, onMounted, computed } from 'vue';
+import { ref, inject, onMounted, computed, watch } from 'vue';
 import axios from 'axios';
 
 import UserCreateModal from '../Modals/UserCreateModal.vue';
@@ -66,8 +72,11 @@ const FLASK_API_BASE_URL = inject<string>("FLASK_API_BASE_URL");
 const token = localStorage.getItem('token'); // Obtén el token de localStorage
 
 const users = ref<User[]>([]);
+const paginatedUsers = ref<User[]>([]);
 const selectedUser = ref();
 const userToDelete = ref();
+
+const searchText = ref('');
 
 const isCreateModalOpen = ref(false);
 const isUpdateModalOpen = ref(false);
@@ -76,10 +85,16 @@ const isDeleteModalOpen = ref(false);
 const currentPage = ref(1); // Página actual
 const itemsPerPage = 5; // Cantidad de elementos por página
 
+const filteredUsers = computed(() => {
+    const filtered = users.value.filter((user) =>
+        user.username.toLowerCase().includes(searchText.value.toLowerCase())
+    );
+    return filtered;
+});
+
 const startIndex = computed(() => (currentPage.value - 1) * itemsPerPage);
 const endIndex = computed(() => currentPage.value * itemsPerPage);
-
-const paginatedUsers = computed(() => users.value.slice(startIndex.value, endIndex.value));
+const totalPages = computed(() => Math.ceil(filteredUsers.value.length / itemsPerPage));
 
 const previousPage = () => {
     if (currentPage.value > 1) {
@@ -92,7 +107,19 @@ const nextPage = () => {
         currentPage.value += 1;
     }
 };
-// TODO:CREAR PAGINACION Y MOSTRAR ALERTAS Y MENSAJES DE ERROR
+
+watch(searchText, () => {
+    if (searchText.value) {
+        // Filtra y muestra los usuarios coincidentes con la búsqueda
+        paginatedUsers.value = filteredUsers.value.slice(startIndex.value, endIndex.value);
+    } else {
+        // Si no hay término de búsqueda, muestra los usuarios paginados normales
+        paginatedUsers.value = users.value.slice(startIndex.value, endIndex.value);
+    }
+    currentPage.value = 1; // Reinicia la página al cambiar la búsqueda
+});
+
+// TODO: MOSTRAR ALERTAS Y MENSAJES DE ERROR
 
 // Realiza la solicitud HTTP cuando el componente se monta
 onMounted(async () => {
