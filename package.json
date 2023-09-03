@@ -6,7 +6,7 @@
     "start": "npm run start:both",
     "start:both": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
     "start:frontend": "vite",
-    "start:backend": "cd backend && .venv\\Scripts\\activate && flask run",
+    "start:backend": ".venv\\Scripts\\activate && cd backend && flask run",
     "dev": "vite",
     "build": "vue-tsc && vite build && electron-builder",
     "preview": "vite preview"
