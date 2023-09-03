@@ -1,4 +1,68 @@
 # import json
+# import pytest
+# from flask import Flask
+
+# from ....application.domain.models.Entity import Base
+# from ....application.infrastructure.routers.authEndpoint import auth_bp
+
+# from sqlalchemy import create_engine
+# from sqlalchemy.orm import sessionmaker
+
+
+# @pytest.fixture
+# def app():
+#     app = Flask(__name__)
+#     app.config["TESTING"] = True
+#     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"  # Utiliza la base de datos en memoria
+#     app.register_blueprint(auth_bp)
+#     yield app
+
+
+# @pytest.fixture
+# def client2(app):
+#     TEST_DATABASE_URL = "sqlite:///:memory:"
+
+#     engine = create_engine(TEST_DATABASE_URL, echo=True)
+#     engine.dispose()
+#     engine = create_engine(TEST_DATABASE_URL, echo=True)
+#     Session = sessionmaker(bind=engine)
+#     Base.metadata.create_all(bind=engine)
+#     session = Session()
+#     with app.test_client(session) as client:
+#         yield client
+
+
+# def test_home_endpoint(client2):
+#     response = client2.get("/")
+#     data = json.loads(response.get_data(as_text=True))
+#     print("#" * 20, "data: ", data)
+#     assert response.status_code == 200
+#     assert data["message"] == "Auth endpoint."
+
+
+# def test_register_endpoint(client2):
+#     new_user_data = {"username": "new_user", "password": "password123", "password_confirm": "password123"}
+#     response = client2.post("/register", json=new_user_data)
+#     print("#" * 20, "response: ", response)
+#     print("#" * 20, "response data: ", response.data)
+#     data = json.loads(response.get_data(as_text=True))
+#     assert response.status_code == 201
+#     assert data["message"] == "User registered successfully!"
+
+#     # Verificar que el usuario fue creado correctamente en la base de datos, si es aplicable
+
+
+# def test_login_endpoint(client):
+#     user_data = {"username": "existing_user", "password": "password123"}
+#     response = client.post("/login", json=user_data)
+#     data = json.loads(response.get_data(as_text=True))
+#     assert response.status_code == 200
+#     assert data["status"] == "success"
+#     assert "access_token" in data
+#     assert data["message"] == "User logged in successfully"
+
+
+# import json
 # from datetime import datetime
 # from flask import url_for
 

@@ -27,26 +27,31 @@ def home():
 
 @auth_bp.route("/register", methods=["POST"])
 def register() -> tuple:
-    user_data = request.get_json()
-    user = user_service.get_user_by_username(user_data["username"])
-    if user:
-        return jsonify({"message": "User already exists."}), 409
-    if user_data["password"] != user_data["password_confirm"]:
-        return jsonify({"message": "Passwords do not match."}), 400
+    try:
+        user_data = request.get_json()
+        user = user_service.get_user_by_username(user_data["username"])
+        if user:
+            return jsonify({"message": "User already exists."}), 409
+        if user_data["password"] != user_data["password_confirm"]:
+            return jsonify({"message": "Passwords do not match."}), 400
 
-    user_data["role"] = RoleEnum.FINAL_USER.value
+        user_data["role"] = RoleEnum.FINAL_USER.value
 
-    if (user_data["username"] == settings.ADMIN) and (user_data["password"] == settings.SECRET_KEY):
-        user_data["role"] = RoleEnum.ADMIN.value
+        if (user_data["username"] == settings.ADMIN) and (user_data["password"] == settings.SECRET_KEY):
+            user_data["role"] = RoleEnum.ADMIN.value
 
-    user_data["password"] = password_manager.encrypt_password(user_data["password"])
+        user_data["password"] = password_manager.encrypt_password(user_data["password"])
 
-    del user_data["password_confirm"]
+        del user_data["password_confirm"]
 
-    user_created = user_service.create_user(user_data)
-    new_user = UserSerializer(user_created).to_dict()
+        user_created = user_service.create_user(user_data)
+        new_user = UserSerializer(user_created).to_dict()
 
-    return jsonify({"user": new_user, "message": "User registered successfully!"}), 201
+        return jsonify({"user": new_user, "message": "User registered successfully!"}), 201
+    except Exception as e:
+        # Maneja excepciones aquí y registra detalles en los registros de la aplicación
+        print(f"Error during registration: {str(e)}")
+        return jsonify({"message": "An error occurred during registration."}), 500
 
 
 @auth_bp.route("/login", methods=["POST"])
