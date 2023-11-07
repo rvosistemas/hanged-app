@@ -1,4 +1,5 @@
 <template>
+    <Navbar />
     <div class="admin-board-container">
         <h1>Admin Panel</h1>
         <div class="search-container">
@@ -61,6 +62,9 @@
 <script setup lang="ts">
 import { ref, inject, onMounted, computed, watch } from 'vue';
 import axios from 'axios';
+import { useRouter } from "vue-router";
+
+import Navbar from "../Navbar/Navbar.vue";
 
 import UserCreateModal from '../Modals/UserCreateModal.vue';
 import UserUpdateModal from '../Modals/UserUpdateModal.vue';
@@ -74,6 +78,8 @@ interface User {
     role: string;
     status: string;
 }
+
+const router = useRouter();
 
 const FLASK_API_BASE_URL = inject<string>("FLASK_API_BASE_URL");
 const token = localStorage.getItem('token'); // Obtén el token de localStorage
@@ -96,7 +102,7 @@ const currentPage = ref(1); // Página actual
 const itemsPerPage = 5; // Cantidad de elementos por página
 
 const filteredUsers = computed(() => {
-    const filtered = users.value.filter((user) =>
+    const filtered = users.value.filter((user: { username: string; }) =>
         user.username.toLowerCase().includes(searchText.value.toLowerCase())
     );
     return filtered;
@@ -161,7 +167,7 @@ const handleUserCreated = (newUser: User) => {
 };
 
 const handleUserDeleted = (userId: number) => {
-    users.value = users.value.filter((user) => user.id !== userId);
+    users.value = users.value.filter((user: { id: number; }) => user.id !== userId);
 };
 
 const deleteUser = (user: User) => {

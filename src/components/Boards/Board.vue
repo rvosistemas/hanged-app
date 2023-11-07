@@ -18,7 +18,7 @@ const goToLogin = () => {
 
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .board-container {
     display: block;
     text-align: center;
