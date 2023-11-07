@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1699392302770" clover="3.2.0">
-  <project timestamp="1699392302770" name="All files">
+<coverage generated="1699396512867" clover="3.2.0">
+  <project timestamp="1699396512868" name="All files">
     <metrics statements="149" coveredstatements="98" conditionals="4" coveredconditionals="2" methods="4" coveredmethods="0" elements="157" coveredelements="100" complexity="0" loc="149" ncloc="149" packages="1" files="1" classes="1"/>
     <file name="LoginForm.vue" path="I:\DESARROLLO DE SOFTWARE\proyectos propios\APPS\python-js\FLASK-ELECTRON-VUE-SQLITE\hanged_app\src\components\auth\LoginForm.vue">
       <metrics statements="149" coveredstatements="98" conditionals="4" coveredconditionals="2" methods="4" coveredmethods="0"/>

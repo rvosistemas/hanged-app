@@ -14,6 +14,11 @@ dist-electron
 release
 *.local
 
+#database
+*.sqlite
+*.sqlite3
+*.db
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -89,6 +94,7 @@ pip-delete-this-directory.txt
 htmlcov/
 .tox/
 .nox/
+*/coverage/*
 .coverage
 .coverage.*
 .cache

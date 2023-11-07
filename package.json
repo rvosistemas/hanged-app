@@ -5,13 +5,14 @@
   "scripts": {
     "start": "npm run start:both",
     "start:both": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
-    "test:unit-with-backend": "concurrently \"npm run start:backend\" \"npm run test:unit\"",
     "start:frontend": "vite",
     "start:backend": ".venv\\Scripts\\activate && cd backend && flask run",
     "dev": "vite",
     "build": "vue-tsc && vite build && electron-builder",
     "preview": "vite preview",
-    "test:unit": "vitest --environment jsdom --root src/ --coverage"
+    "test:unit-front": "vitest --environment jsdom --root src/ --coverage",
+    "test:unit-back": ".venv\\Scripts\\activate && make coverage-application",
+    "test:unit-both": "concurrently \"npm run test:unit-back\" \"npm run test:unit-front\""
   },
   "dependencies": {
     "@types/axios": "^0.14.0",
