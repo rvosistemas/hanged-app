@@ -1,9 +1,10 @@
 import { createApp } from 'vue';
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import App from './App.vue';
-import LoginForm from './components/LoginForm.vue';
-import RegisterForm from './components/RegisterForm.vue';
-import Board from './components/Board.vue';
+import LoginForm from './components/auth/LoginForm.vue';
+import RegisterForm from './components/auth/RegisterForm.vue';
+import Board from './components/Boards/Board.vue';
+import AdminBoard from './components/Boards/AdminBoard.vue';
 
 import { FLASK_API_BASE_URL, VUE_API_BASE_URL } from '../config';
 
@@ -18,6 +19,20 @@ const routes: Array<RouteRecordRaw> = [
             const IsAuthtenticated = localStorage.getItem('token');
 
             if (IsAuthtenticated) {
+                next();
+            } else {
+                next('/login');
+            }
+        },
+    },
+    {
+        path: '/admin_board',
+        component: AdminBoard,
+        beforeEnter: (to, from, next) => {
+            // Asegurarse de que el usuario esté autenticado y sea administrador
+            const isAuthenticated = localStorage.getItem('token');
+            const userRole = localStorage.getItem("userRole");
+            if (isAuthenticated && userRole === "admin") {
                 next();
             } else {
                 next('/login');

@@ -47,6 +47,8 @@ instance/*
 ### Flask.Python Stack ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
+__pycache__/*
+*.pyc
 *.py[cod]
 *$py.class
 
@@ -205,6 +207,7 @@ cython_debug/
 #.idea/
 
 ### Python ###
+
 # Byte-compiled / optimized / DLL files
 
 # C extensions
